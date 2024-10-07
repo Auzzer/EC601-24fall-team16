@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback Chat</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="chat-container">
+        <div class="header">
+            <h2>Product Feedback Assistant</h2>
+            <p>Ask questions, provide feedback, and get responses from our AI assistant.</p>
+        </div>
+
+        <div class="chat-box" id="chatBox">
+            <!-- Conversation will be dynamically inserted here -->
+        </div>
+
+        <div class="input-container">
+            <form id="chatForm">
+                <input type="text" id="userInput" placeholder="Type your feedback or question here..." required>
+                <button type="submit">Send</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const chatForm = document.getElementById('chatForm');
+        const chatBox = document.getElementById('chatBox');
+
+        chatForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const userInput = document.getElementById('userInput').value;
+
+            if (userInput.trim() !== "") {
+                // Simulate appending user's question
+                chatBox.innerHTML += `<div class="user-message"><strong>You:</strong> ${userInput}</div>`;
+                document.getElementById('userInput').value = '';
+
+                // Simulate AI's response
+                setTimeout(() => {
+                    chatBox.innerHTML += `<div class="ai-message"><strong>AI Assistant:</strong> Here's an actionable suggestion based on your input...</div>`;
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                }, 1000);
+            }
+        });
+    </script>
+</body>
+</html>
+

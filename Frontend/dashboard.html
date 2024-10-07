@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drawing and Text Canvas</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">Submit Feedback</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="dashboard-container">
+        <h2>Design Insights & Decision-Making</h2>
+        <p>Use the canvas to draw and plan your design decisions.</p>
+
+        <div class="toolbar">
+            <button id="addTextBtn">Add Text</button>
+            <button id="drawBtn">Draw Mode</button>
+            <button id="clearBtn">Clear Canvas</button>
+        </div>
+
+        <div class="canvas-container">
+            <canvas id="drawingCanvas"></canvas>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('drawingCanvas');
+        const ctx = canvas.getContext('2d');
+        const clearBtn = document.getElementById('clearBtn');
+        const drawBtn = document.getElementById('drawBtn');
+        const addTextBtn = document.getElementById('addTextBtn');
+        
+        let drawing = false;
+        let isDrawingMode = false;
+        let isTextMode = false;
+
+        // Set canvas dimensions
+        canvas.width = window.innerWidth * 0.8;
+        canvas.height = 600;
+
+        // Mouse events for drawing
+        canvas.addEventListener('mousedown', (e) => {
+            if (isDrawingMode) startDrawing(e);
+        });
+        canvas.addEventListener('mouseup', () => {
+            if (isDrawingMode) stopDrawing();
+        });
+        canvas.addEventListener('mousemove', (e) => {
+            if (isDrawingMode) draw(e);
+        });
+
+        // Start drawing
+        function startDrawing(e) {
+            drawing = true;
+            ctx.beginPath();
+            ctx.moveTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
+        }
+
+        // Stop drawing
+        function stopDrawing() {
+            drawing = false;
+            ctx.closePath();
+        }
+
+        // Drawing function
+        function draw(e) {
+            if (!drawing) return;
+            ctx.lineTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
+            ctx.strokeStyle = '#000'; // Line color
+            ctx.lineWidth = 2; // Line width
+            ctx.stroke();
+        }
+
+        // Add Text Functionality
+        addTextBtn.addEventListener('click', () => {
+            isDrawingMode = false;
+            isTextMode = true;
+            alert('Text mode activated. Click on the canvas to add text.');
+
+            canvas.addEventListener('click', addText);
+        });
+
+        function addText(e) {
+            if (isTextMode) {
+                const textElement = document.createElement('div');
+                textElement.contentEditable = true;
+                textElement.classList.add('text-element');
+                textElement.innerHTML = 'Edit me...';
+                textElement.style.position = 'absolute';
+                textElement.style.left = `${e.clientX - canvas.offsetLeft}px`;
+                textElement.style.top = `${e.clientY - canvas.offsetTop}px`;
+                document.querySelector('.canvas-container').appendChild(textElement);
+            }
+        }
+
+        // Clear the canvas
+        clearBtn.addEventListener('click', () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            document.querySelectorAll('.text-element').forEach(el => el.remove());
+        });
+
+        // Toggle draw mode
+        drawBtn.addEventListener('click', () => {
+            isDrawingMode = true;
+            isTextMode = false;
+            alert('Draw mode activated. Use your mouse to draw on the canvas.');
+            canvas.removeEventListener('click', addText);
+        });
+    </script>
+</body>
+</html>
