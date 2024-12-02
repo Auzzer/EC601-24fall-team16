@@ -1,0 +1,66 @@
+<html>
+<head>
+<title>app.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cf8e6d;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #6aab73;}
+.s4 { color: #2aacb8;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+app.py</font>
+</center></td></tr></table>
+<pre><span class="s0">from </span><span class="s1">flask </span><span class="s0">import </span><span class="s1">Flask</span><span class="s2">, </span><span class="s1">render_template</span><span class="s2">, </span><span class="s1">redirect</span><span class="s2">, </span><span class="s1">url_for</span><span class="s2">, </span><span class="s1">session</span>
+<span class="s0">import </span><span class="s1">os</span>
+<span class="s0">import </span><span class="s1">pandas </span><span class="s0">as </span><span class="s1">pd</span>
+
+<span class="s1">app </span><span class="s2">= </span><span class="s1">Flask</span><span class="s2">(</span><span class="s1">__name__</span><span class="s2">, </span><span class="s1">static_folder</span><span class="s2">=</span><span class="s3">'/Users/lizhengyuan/PycharmProjects/EC601_project/static'</span><span class="s2">)</span>
+<span class="s1">app</span><span class="s2">.</span><span class="s1">secret_key </span><span class="s2">= </span><span class="s3">'very_secret_key'</span>
+
+<span class="s1">fullfinetune_dir </span><span class="s2">= </span><span class="s3">'/Users/lizhengyuan/PycharmProjects/EC601_project/static/fullfinetune'</span>
+<span class="s1">qlora_dir </span><span class="s2">= </span><span class="s3">'/Users/lizhengyuan/PycharmProjects/EC601_project/static/qlora'</span>
+<span class="s1">fullfinetune_images </span><span class="s2">= </span><span class="s1">sorted</span><span class="s2">([</span><span class="s1">f </span><span class="s0">for </span><span class="s1">f </span><span class="s0">in </span><span class="s1">os</span><span class="s2">.</span><span class="s1">listdir</span><span class="s2">(</span><span class="s1">fullfinetune_dir</span><span class="s2">) </span><span class="s0">if </span><span class="s1">f</span><span class="s2">.</span><span class="s1">endswith</span><span class="s2">(</span><span class="s3">'.png'</span><span class="s2">)])</span>
+<span class="s1">qlora_images </span><span class="s2">= </span><span class="s1">sorted</span><span class="s2">([</span><span class="s1">f </span><span class="s0">for </span><span class="s1">f </span><span class="s0">in </span><span class="s1">os</span><span class="s2">.</span><span class="s1">listdir</span><span class="s2">(</span><span class="s1">qlora_dir</span><span class="s2">) </span><span class="s0">if </span><span class="s1">f</span><span class="s2">.</span><span class="s1">endswith</span><span class="s2">(</span><span class="s3">'.png'</span><span class="s2">)])</span>
+
+<span class="s1">csv_file </span><span class="s2">= </span><span class="s3">'button_press_count.csv'</span>
+
+<span class="s0">def </span><span class="s1">init_csv</span><span class="s2">():</span>
+    <span class="s1">df </span><span class="s2">= </span><span class="s1">pd</span><span class="s2">.</span><span class="s1">DataFrame</span><span class="s2">({</span><span class="s3">'fullfinetune'</span><span class="s2">: [</span><span class="s4">0</span><span class="s2">], </span><span class="s3">'qlora'</span><span class="s2">: [</span><span class="s4">0</span><span class="s2">]})</span>
+    <span class="s1">df</span><span class="s2">.</span><span class="s1">to_csv</span><span class="s2">(</span><span class="s1">csv_file</span><span class="s2">, </span><span class="s1">index</span><span class="s2">=</span><span class="s0">False</span><span class="s2">)</span>
+
+<span class="s2">@</span><span class="s1">app</span><span class="s2">.</span><span class="s1">route</span><span class="s2">(</span><span class="s3">'/'</span><span class="s2">)</span>
+<span class="s0">def </span><span class="s1">index</span><span class="s2">():</span>
+
+    <span class="s1">session</span><span class="s2">[</span><span class="s3">'index'</span><span class="s2">] = </span><span class="s4">0</span>
+    <span class="s0">return </span><span class="s1">redirect</span><span class="s2">(</span><span class="s1">url_for</span><span class="s2">(</span><span class="s3">'show_images'</span><span class="s2">))</span>
+
+<span class="s2">@</span><span class="s1">app</span><span class="s2">.</span><span class="s1">route</span><span class="s2">(</span><span class="s3">'/show_images'</span><span class="s2">)</span>
+<span class="s0">def </span><span class="s1">show_images</span><span class="s2">():</span>
+    <span class="s1">index </span><span class="s2">= </span><span class="s1">session</span><span class="s2">.</span><span class="s1">get</span><span class="s2">(</span><span class="s3">'index'</span><span class="s2">, </span><span class="s4">0</span><span class="s2">)</span>
+    <span class="s0">if </span><span class="s1">index </span><span class="s2">&gt;= </span><span class="s1">len</span><span class="s2">(</span><span class="s1">fullfinetune_images</span><span class="s2">) </span><span class="s0">or </span><span class="s1">index </span><span class="s2">&gt;= </span><span class="s1">len</span><span class="s2">(</span><span class="s1">qlora_images</span><span class="s2">):</span>
+        <span class="s1">df </span><span class="s2">= </span><span class="s1">pd</span><span class="s2">.</span><span class="s1">read_csv</span><span class="s2">(</span><span class="s1">csv_file</span><span class="s2">)</span>
+        <span class="s0">return </span><span class="s1">render_template</span><span class="s2">(</span><span class="s3">'thankyou.html'</span><span class="s2">, </span><span class="s1">fullfinetune_count</span><span class="s2">=</span><span class="s1">df</span><span class="s2">[</span><span class="s3">'fullfinetune'</span><span class="s2">][</span><span class="s4">0</span><span class="s2">], </span><span class="s1">qlora_count</span><span class="s2">=</span><span class="s1">df</span><span class="s2">[</span><span class="s3">'qlora'</span><span class="s2">][</span><span class="s4">0</span><span class="s2">])</span>
+    <span class="s1">fullfinetune_image </span><span class="s2">= </span><span class="s1">url_for</span><span class="s2">(</span><span class="s3">'static'</span><span class="s2">, </span><span class="s1">filename</span><span class="s2">=</span><span class="s3">f'fullfinetune/</span><span class="s0">{</span><span class="s1">fullfinetune_images</span><span class="s2">[</span><span class="s1">index</span><span class="s2">]</span><span class="s0">}</span><span class="s3">'</span><span class="s2">)</span>
+    <span class="s1">qlora_image </span><span class="s2">= </span><span class="s1">url_for</span><span class="s2">(</span><span class="s3">'static'</span><span class="s2">, </span><span class="s1">filename</span><span class="s2">=</span><span class="s3">f'qlora/</span><span class="s0">{</span><span class="s1">qlora_images</span><span class="s2">[</span><span class="s1">index</span><span class="s2">]</span><span class="s0">}</span><span class="s3">'</span><span class="s2">)</span>
+    <span class="s0">return </span><span class="s1">render_template</span><span class="s2">(</span><span class="s3">'index.html'</span><span class="s2">, </span><span class="s1">fullfinetune_image</span><span class="s2">=</span><span class="s1">fullfinetune_image</span><span class="s2">, </span><span class="s1">qlora_image</span><span class="s2">=</span><span class="s1">qlora_image</span><span class="s2">)</span>
+
+<span class="s2">@</span><span class="s1">app</span><span class="s2">.</span><span class="s1">route</span><span class="s2">(</span><span class="s3">'/record_choice/&lt;model&gt;'</span><span class="s2">, </span><span class="s1">methods</span><span class="s2">=[</span><span class="s3">'POST'</span><span class="s2">])</span>
+<span class="s0">def </span><span class="s1">record_choice</span><span class="s2">(</span><span class="s1">model</span><span class="s2">):</span>
+    <span class="s0">if </span><span class="s3">'index' </span><span class="s0">in </span><span class="s1">session</span><span class="s2">:</span>
+        <span class="s1">df </span><span class="s2">= </span><span class="s1">pd</span><span class="s2">.</span><span class="s1">read_csv</span><span class="s2">(</span><span class="s1">csv_file</span><span class="s2">)</span>
+        <span class="s1">df</span><span class="s2">[</span><span class="s1">model</span><span class="s2">] += </span><span class="s4">1</span>
+        <span class="s1">df</span><span class="s2">.</span><span class="s1">to_csv</span><span class="s2">(</span><span class="s1">csv_file</span><span class="s2">, </span><span class="s1">index</span><span class="s2">=</span><span class="s0">False</span><span class="s2">)</span>
+        <span class="s1">session</span><span class="s2">[</span><span class="s3">'index'</span><span class="s2">] = </span><span class="s1">session</span><span class="s2">.</span><span class="s1">get</span><span class="s2">(</span><span class="s3">'index'</span><span class="s2">, </span><span class="s4">0</span><span class="s2">) + </span><span class="s4">1</span>
+    <span class="s0">return </span><span class="s1">redirect</span><span class="s2">(</span><span class="s1">url_for</span><span class="s2">(</span><span class="s3">'show_images'</span><span class="s2">))</span>
+
+<span class="s0">if </span><span class="s1">__name__ </span><span class="s2">== </span><span class="s3">'__main__'</span><span class="s2">:</span>
+    <span class="s1">init_csv</span><span class="s2">()</span>
+    <span class="s1">app</span><span class="s2">.</span><span class="s1">run</span><span class="s2">(</span><span class="s1">debug</span><span class="s2">=</span><span class="s0">True</span><span class="s2">)</span></pre>
+</body>
+</html>
