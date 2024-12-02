@@ -2,22 +2,49 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Image Selection</title>
+    <style>
+        .container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .image-container {
+            text-align: center;
+            flex: 1;
+        }
+        .image-container img {
+            width: 100%;
+            height: auto;
+            max-width: 300px; /* Optional: Limit max image width */
+        }
+        .button-container {
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
     <div style="text-align: center;">
         <h1>Choose Your Preferred Image</h1>
-        <div>
-            <img src="/static/fullfinetune/image1.png" alt="FullFinetune Image" style="width: 48%; height: auto;">
-            <img src="/static/qlora/image2.png" alt="QLora Image" style="width: 48%; height: auto;">
-        </div>
-        <div style="margin-top: 20px;">
-            <form action="/record_choice/fullfinetune" method="post">
-                <button type="submit">Choose FullFinetune</button>
-            </form>
-            <form action="/record_choice/qlora" method="post">
-                <button type="submit">Choose QLora</button>
-            </form>
+        <div class="container">
+            <div class="image-container">
+                <img src="{{ fullfinetune_image }}" alt="FullFinetune Image">
+                <div class="button-container">
+                    <form action="/record_choice/fullfinetune" method="post">
+                        <button type="submit">Choose FullFinetune</button>
+                    </form>
+                </div>
+            </div>
+            <div class="image-container">
+                <img src="{{ qlora_image }}" alt="QLora Image">
+                <div class="button-container">
+                    <form action="/record_choice/qlora" method="post">
+                        <button type="submit">Choose QLora</button>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 </body>
